@@ -26,6 +26,18 @@ class BmiMain extends StatefulWidget {
 
 class _BmiMainState extends State<BmiMain> {
   final _formKey = GlobalKey<FormState>();
+
+  final _heightController = TextEditingController();
+  final _weightController = TextEditingController();
+
+
+  @override
+  void dispose() {
+    _heightController.dispose();
+    _weightController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -41,12 +53,26 @@ class _BmiMainState extends State<BmiMain> {
                   border: OutlineInputBorder(),
                   hintText: '키',
                 ),
+                controller: _heightController,
                 keyboardType: TextInputType.number,
+                validator: (value){
+                  if(value.trim().isEmpty){
+                    return '키를 입력하세요';
+                  }
+                  return null;
+                },
               ),
               SizedBox(
                 height: 16.0,
               ),
               TextFormField(
+                controller: _weightController,
+                validator: (value){
+                  if(value.trim().isEmpty){
+                    return '몸무게를 입력하세요';
+                  }
+                  return null;
+                },
                 decoration: InputDecoration(
                   border: OutlineInputBorder(),
                   hintText: '몸무게'),
@@ -58,7 +84,15 @@ class _BmiMainState extends State<BmiMain> {
                   child:RaisedButton(
                     onPressed: (){
                       if(_formKey.currentState.validate()){
-                        // 검증시 처리 코드
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context)=>BmiResult(
+                              double.parse(_heightController.text.trim()),
+                              double.parse(_weightController.text.trim())
+                            )
+                          )
+                        );
                       }
                     },
                     child: Text('결과 보기'),
